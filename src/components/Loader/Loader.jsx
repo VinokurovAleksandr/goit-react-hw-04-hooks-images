@@ -2,7 +2,7 @@ import { RotatingLines } from 'react-loader-spinner';
 import PropTypes from 'prop-types';
 import s from './Loader.module.css';
 
-export function Loader (visible) {
+export function Loader () {
     return (
         <div className={s.loader}>
              <RotatingLines
@@ -10,7 +10,7 @@ export function Loader (visible) {
             strokeWidth="5"
             animationDuration="0.75"
             width="96"
-            visible={visible}
+            visible={true}
             
         />
         </div>

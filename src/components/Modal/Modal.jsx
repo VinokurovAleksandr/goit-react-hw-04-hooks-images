@@ -10,6 +10,7 @@ export class Modal extends Component {
     componentDidMount() {
       
         window.addEventListener('keydown',this.handleKeyDown);
+    
     }
 
     componentWillUnmount() {
@@ -19,19 +20,14 @@ export class Modal extends Component {
     
 
 
-    handleKeyDown = event => {
-        if (event.code === 'Escape') {
-            console.log('Click ESC');
-            
+    handleKeyDown = e => {
+        if (e.code === 'Escape') {
+
             this.props.onClose();
         }
-        console.log('componentDidMount');
-        
     };
 
     handleBackDropClick = e => {
-        console.log('currentTarget' , e.currentTarget);
-        
         if (e.currentTarget === e.target) {
 
             this.props.onClose();
@@ -40,6 +36,18 @@ export class Modal extends Component {
 
    
     render() {
+
+        // return createPortal(
+        //     <div className={s.Overlay}>
+        //         <div className={s.Modal}>
+        //             {this.props.children}
+        //             {/* <img src="" alt="" /> */}
+        //         </div>
+        //     </div>,
+        //     modalRoot,
+        // );
+              
+        
         const {largeImageURL, tags} = this.props.showModal
         return createPortal(
             
@@ -50,6 +58,11 @@ export class Modal extends Component {
         </div>
             </div>,
             modalRoot,
+            <div class="overlay">
+                <div class="modal">
+                    <img src="" alt="" />
+                </div>
+            </div>
         )
 }}
   
