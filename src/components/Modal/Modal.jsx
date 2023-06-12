@@ -37,17 +37,6 @@ export class Modal extends Component {
    
     render() {
 
-        // return createPortal(
-        //     <div className={s.Overlay}>
-        //         <div className={s.Modal}>
-        //             {this.props.children}
-        //             {/* <img src="" alt="" /> */}
-        //         </div>
-        //     </div>,
-        //     modalRoot,
-        // );
-              
-        
         const {largeImageURL, tags} = this.props.showModal
         return createPortal(
             

@@ -1,6 +1,6 @@
 
 import { ToastContainer } from 'react-toastify';
-// import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { Component } from "react";
 
 import s from './app.module.css';
@@ -33,23 +33,35 @@ export class App extends Component {
       // this.setState({ status: 'pending' });
           
       fetchQuery(query, page)
-        .then(r => r.json())
-        .then(data => this.setState(prevState => ({
-          images: [...prevState.images, ...data.hits],
+        // .then(data => this.setState(prevState => ({
+        //   images: [...prevState.images, ...data.hits],
             
-        })))
-        
-        
-            .catch(error => this.setState({error }))
-            .finally(() => this.setState({ loading: false })) 
+        // })))
+        .then(({ hits }) => {
+          const images = hits.map(({ id, webformatURL, largeImageURL, tags }) => {
+            return { id, webformatURL, largeImageURL, tags };
+          });
+          if (images.length > 0) {
+            this.setState(prevState => {
+              return {
+                images: [...prevState.images, ...images],
+              };
+            });
+          } else {
+            toast.error(`По запиту ${query} ми нічого не знайшли.`);
+          }
+        })
+
+       .catch(error => this.setState({error }))
+        .finally(() => this.setState({ loading: false })) 
             
     }
-    
   };
+  
 
   handleFormSubmit = query => {
-    this.setState({query, page: 1, images: []})
-  }
+    this.setState({ query, page: 1, images: [] })
+  };
 
     handleClickBtn = () => {
     this.setState(({page}) => ({ page: page + 1 }))
@@ -103,9 +115,9 @@ export class App extends Component {
            
           
           </div>
-         
-      
+
     )
   }
-}
+};
+
 
