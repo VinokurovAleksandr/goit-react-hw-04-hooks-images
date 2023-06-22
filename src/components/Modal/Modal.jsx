@@ -1,48 +1,45 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 import s from './modal.module.css'
 
 const modalRoot = document.querySelector('#modal-root');
 
-export class Modal extends Component {
 
-    componentDidMount() {
-      
-        window.addEventListener('keydown',this.handleKeyDown);
+export function Modal ({onClose, showModal, children}) {
+
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+    });
+    useEffect(() => {
+        window.removeEventListener('keydown', handleKeyDown);
+    });
+
     
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('keydown', this.handleKeyDown)
-         
-    }
-    
-
-
-    handleKeyDown = e => {
+   const handleKeyDown = e => {
         if (e.code === 'Escape') {
 
-            this.props.onClose();
+            onClose();
         }
     };
 
-    handleBackDropClick = e => {
+  const handleBackDropClick = e => {
         if (e.currentTarget === e.target) {
 
-            this.props.onClose();
+            onClose();
         }
     };
 
-   
-    render() {
 
-        const {largeImageURL, tags} = this.props.showModal
+
+
+
+    const {largeImageURL, tags} = showModal
         return createPortal(
             
-             <div className={s.Overlay} onClick = {this.handleBackDropClick}>
+             <div className={s.Overlay} onClick = {handleBackDropClick}>
                 <div className={s.Modal}>
-                    {this.props.children}
+                    {children}
             <img src={largeImageURL} alt={tags} />
         </div>
             </div>,
@@ -53,8 +50,8 @@ export class Modal extends Component {
                 </div>
             </div>
         )
-}}
-  
+};
+
 
 
     

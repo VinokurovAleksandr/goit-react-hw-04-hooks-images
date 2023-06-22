@@ -1,109 +1,83 @@
 
 import { ToastContainer } from 'react-toastify';
 import { toast } from 'react-toastify';
-import { Component } from "react";
+import { useEffect, useState } from "react";
 
 import s from './app.module.css';
 import { Searchbar } from './Searchbar/Searchbar';
 import  {fetchQuery}  from './Api/Api';
-import { ImageGallery } from './ImageGallery/ImageGallery';
+import  {ImageGallery}  from './ImageGallery/ImageGallery';
 import { Loader } from './Loader/Loader';
 import { Btn } from './Button/Button';
 import {Modal} from './Modal/Modal';
 
-export class App extends Component {
 
-  state = {
-    images: [],
-    query: '',
-    page: 1,
-    loading: false,
-    error: null,
-    // status: 'idle',
-    showModal: false,
-  }
+export function App() { 
+  
+ 
+  const [images, setImages] = useState([]);
+  const [query, setQuery] = useState('');
+  const [page, setPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-  componentDidUpdate(_, prevState) {
 
-    const { query, page } = this.state;
-
-    if (prevState.query !== query || prevState.page !== page) { 
-          
-          this.setState({ loading: true, });
-      // this.setState({ status: 'pending' });
-          
-      fetchQuery(query, page)
-        // .then(data => this.setState(prevState => ({
-        //   images: [...prevState.images, ...data.hits],
-            
-        // })))
-        .then(({ hits }) => {
-          const images = hits.map(({ id, webformatURL, largeImageURL, tags }) => {
-            return { id, webformatURL, largeImageURL, tags };
-          });
-          if (images.length > 0) {
-            this.setState(prevState => {
-              return {
-                images: [...prevState.images, ...images],
-              };
-            });
-          } else {
-            toast.error(`По запиту ${query} ми нічого не знайшли.`);
-          }
-        })
-
-       .catch(error => this.setState({error }))
-        .finally(() => this.setState({ loading: false })) 
-            
+  useEffect(() => {
+       if ( !query ) {
+      return;
     }
-  };
-  
+      setLoading(true);
 
-  handleFormSubmit = query => {
-    this.setState({ query, page: 1, images: [] })
+    fetchQuery(query, page)
+      .then(({ hits }) => {
+        if (hits.length > 0) {
+          return (
+            setImages(prevImages => [...prevImages, ...hits])
+          )} else {toast.error(`По запиту ${query} ми нічого не знайшли.`);}
+      })
+      .catch(error => setError(error))
+      .finally(() => setLoading(false))
+  }, [page, query]);
+
+
+
+  const handleFormSubmit = query => {
+    setQuery(query)
+    setPages(1)
+    setImages([])
   };
 
-    handleClickBtn = () => {
-    this.setState(({page}) => ({ page: page + 1 }))
+    const  handleClickBtn = () => {
+      setPages(prevPage => prevPage +1)
+
   };
 
-   toggleModal = () => {
-        this.setState(({ showModal }) => ({
-            showModal: !showModal,
-        }));
+  const toggleModal = () => {
+     setShowModal(!showModal)
   };
-  
-    onClickImgGallery = showModal => {
-        this.setState({ showModal });
-  };
-  
-  
 
-  render() {
-
-    const { images, query, loading, error, showModal } = this.state;
-      
-  
+    
     return (
       
       <div className={s.App}>
         
-           <Searchbar onSubmit={this.handleFormSubmit} />
+           <Searchbar onSubmit={handleFormSubmit} />
           {error && <h1>{error.message }</h1>}
         {loading && <Loader visible={true} />}
         
         <>
         
           <ImageGallery
-            imgClick={this.onClickImgGallery}
+            imgClick={setShowModal}
             query={query}
             images={images} 
           />
            
-          {images.length > 0 && <Btn onClickBtn={this.handleClickBtn} />}
+          {images.length > 0 && <Btn onClickBtn={handleClickBtn} />}
           {showModal &&
             (<Modal
-            onClose={this.toggleModal}
+            onClose={toggleModal}
             showModal={showModal}>
             </Modal>)}
           </>
@@ -116,8 +90,8 @@ export class App extends Component {
           
           </div>
 
-    )
-  }
+  )
+  
 };
 
 

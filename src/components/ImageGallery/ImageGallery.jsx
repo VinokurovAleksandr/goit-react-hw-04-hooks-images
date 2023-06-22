@@ -1,32 +1,33 @@
-import { Component } from "react";
 
-import s from './style.module.css'
+import PropTypes from 'prop-types';
+import s from './style.module.css';
 
-import {ImageGalleryItem} from '../ImageGalleryItem/ImageGalleryItem'
+import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 
-// import {fetchQuery}  from '../Api/Api';
 
-export class ImageGallery extends Component {
+ export const ImageGallery = ({ images, imgClick }) => { 
 
-    render() {
-
-        const { images } = this.props;
-
-        return (
+    return (
             <ul className={s.ImageGallery}>
-                {images && images.map(image => {
+                {images.map(image => {
                     return (
                         <ImageGalleryItem
                             key={image.id}
                             itemList={image}
-                            imgClick={this.props.imgClick}
+                            imgClick={imgClick}
                         />
                     )
                 })}
 
             </ul>
         )
-    }
-}
+};
 
-
+ImageGallery.propTypes = {
+    images: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.number.isRequired,
+        })
+    ),
+    imgClick: PropTypes.func.isRequired,
+};
